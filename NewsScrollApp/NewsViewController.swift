@@ -9,9 +9,15 @@
 import UIKit
 import XLPagerTabStrip
 import WebKit
+import NVActivityIndicatorView
+
+
+
 
 class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate, WKNavigationDelegate, XMLParserDelegate{
 
+    
+    var activityIndicatorView: NVActivityIndicatorView!
     // 引っ張って更新
     var refreshControl: UIRefreshControl!
 
@@ -46,6 +52,13 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
 
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+    
+        // インジケータの追加
+        activityIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 60, height: 60), type: NVActivityIndicatorType.lineSpinFadeLoader, color: UIColor.red, padding: 0)
+        activityIndicatorView.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50) // 位置を中心に設定
+        view.addSubview(activityIndicatorView)
+       
         // refreshControlのインスタンス
         refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
@@ -69,7 +82,8 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         // 最初は隠す（tableviewが表示されるのを邪魔しないように）
         webView.isHidden = true
         toolBar.isHidden = true
-
+        
+        
         parseUrl()
     }
 
@@ -98,6 +112,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         parser.parse()
         // TableViewのリロード
         tableView.reloadData()
+        
     }
     // 解析中に要素の開始タグがあったときに実行されるメソッド
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
@@ -113,6 +128,46 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         }
     }
 
+    var indicatorBackgroundView: UIView!
+    // 画面タッチできないようにする関数
+    func showIndicator() {
+        
+        // インジケータビューの背景
+        indicatorBackgroundView = UIView(frame: self.view.bounds)
+        indicatorBackgroundView?.backgroundColor = UIColor.black
+        indicatorBackgroundView?.alpha = 0.4
+        indicatorBackgroundView?.tag = 100100
+        // 作成したviewを表示
+        indicatorBackgroundView?.addSubview(activityIndicatorView)
+        self.view.addSubview(indicatorBackgroundView!)
+        
+    }
+    
+    
+    
+    func hideIndicator(){
+        // viewにローディング画面が出ていれば閉じる
+        if let viewWithTag = self.view.viewWithTag(100100) {
+            viewWithTag.removeFromSuperview()
+        }
+    }
+    // インジケータ開始(startメソッドは書かなくてもOKw)
+   func start() {
+        activityIndicatorView.startAnimating()
+    // viewの表示を優先度高くする
+     self.view.bringSubviewToFront(activityIndicatorView)
+     showIndicator()
+   
+    }
+
+    
+    // インジケータ 停止(stopメソッドは書かなくてもOKw)
+   func stop() {
+    
+        activityIndicatorView.stopAnimating()
+        hideIndicator()
+    }
+    
     // 開始タグと終了タグでくくられたデータがあったときに実行されるメソッド
     func parser(_ parser: XMLParser, foundCharacters string: String) {
 
@@ -184,6 +239,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         let urlRequest = NSURLRequest(url: url)
         // ここでロード
         webView.load(urlRequest as URLRequest)
+        start()
     }
 
     // ページの読み込み完了時に呼ばれる
@@ -194,6 +250,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         toolBar.isHidden = false
         // webviewを表示する
         webView.isHidden = false
+        stop()
     }
 
     // キャンセル
