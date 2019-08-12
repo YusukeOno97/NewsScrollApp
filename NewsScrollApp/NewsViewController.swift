@@ -16,7 +16,7 @@ import NVActivityIndicatorView
 
 class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate, WKNavigationDelegate, XMLParserDelegate{
 
-    
+    // インディケーター変数定義
     var activityIndicatorView: NVActivityIndicatorView!
     // 引っ張って更新
     var refreshControl: UIRefreshControl!
@@ -55,7 +55,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
        
     
         // インジケータの追加
-        activityIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 60, height: 60), type: NVActivityIndicatorType.lineSpinFadeLoader, color: UIColor.red, padding: 0)
+        activityIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 60, height: 60), type: NVActivityIndicatorType.lineScalePulseOutRapid, color: UIColor.red, padding: 0)
         activityIndicatorView.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50) // 位置を中心に設定
         view.addSubview(activityIndicatorView)
        
@@ -239,6 +239,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         let urlRequest = NSURLRequest(url: url)
         // ここでロード
         webView.load(urlRequest as URLRequest)
+        // インディケーターを表示する
         start()
     }
 
@@ -250,6 +251,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         toolBar.isHidden = false
         // webviewを表示する
         webView.isHidden = false
+        // インディケーター表示を終了
         stop()
     }
 
