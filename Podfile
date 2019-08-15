@@ -8,5 +8,6 @@ target 'NewsScrollApp' do
   # Pods for NewsScrollApp
   pod 'XLPagerTabStrip'
   pod 'SDWebImage'
-
+  pod 'NVActivityIndicatorView'
+# Date:      Sat Aug 3 14:22:40 2019 +0900
 end
