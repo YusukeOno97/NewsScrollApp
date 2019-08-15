@@ -11,9 +11,6 @@ import XLPagerTabStrip
 import WebKit
 import NVActivityIndicatorView
 
-
-
-
 class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate, WKNavigationDelegate, XMLParserDelegate{
     
     // インディケーター変数定義
@@ -53,10 +50,10 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         // インジケータの追加
         activityIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 60, height: 60), type: NVActivityIndicatorType.lineScalePulseOutRapid, color: UIColor.red, padding: 0)
-        activityIndicatorView.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50) // 位置を中心に設定
+        // 位置を中心に設定
+        activityIndicatorView.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
         view.addSubview(activityIndicatorView)
         
         // refreshControlのインスタンス
@@ -82,7 +79,6 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         // 最初は隠す（tableviewが表示されるのを邪魔しないように）
         webView.isHidden = true
         toolBar.isHidden = true
-        
         
         parseUrl()
     }
@@ -153,7 +149,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
     }
     // インジケータ開始
     func start() {
-       
+        
         activityIndicatorView.startAnimating()
         // viewの表示を優先度高くする
         self.view.bringSubviewToFront(activityIndicatorView)
@@ -164,7 +160,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
     
     // インジケータ 停止
     func stop() {
-       
+        
         activityIndicatorView.stopAnimating()
         hideIndicator()
         
@@ -232,7 +228,7 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
     
     // セルをタップしたときの処理
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //
+        
         let linkUrl = ((articles[indexPath.row] as AnyObject).value(forKey: "link") as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
         let urlStr = (linkUrl?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed))!
         guard let url = URL(string: urlStr) else {
